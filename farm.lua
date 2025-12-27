@@ -5,7 +5,7 @@ wait(8)
 if game:GetService("Workspace").RespawnMobs.Titan.Titan.Titan  then
 	game:GetService("Workspace").biokiller60.HumanoidRootPart.CFrame = game:GetService("Workspace").RespawnMobs.Titan.Titan.CFrame
 end
-wait (15)
+wait (27)
 game:GetService("Workspace").biokiller60.HumanoidRootPart.CFrame = game:GetService("Workspace").Bosses.Waiting.Muscle.qw.CFrame
 wait(8)
 if game:GetService("Workspace").RespawnMobs.Muscle.Muscle then
