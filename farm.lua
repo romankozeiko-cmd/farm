@@ -1,408 +1,279 @@
---[[
-    YOUTUBE TUTORIAL: https://www.youtube.com/watch?v=Yb2GXlsTmNM
-    MADE BY @uerd
-]]
+-- COMPACT KEY SYSTEM + AUTOSAVE (FIXED SIZE)
 
 Config = {
-    api = "7a4939b2-37ac-4a92-98d2-b2bacdf36791", 
+    api = "7a4939b2-37ac-4a92-98d2-b2bacdf36791",
     service = "Saltink",
     provider = "Anubis"
 }
 
--- ФУНКЦИЯ MAIN: Сюда вставлен твой основной скрипт
+--------------------------------------------------
+-- MAIN SCRIPT (БЕЗ ИЗМЕНЕНИЙ)
+--------------------------------------------------
 local function main()
     print("Key Validated! Starting Script...")
 
-    -- ТВОЙ СКРИПТ (БЕЗ ИЗМЕНЕНИЙ) --
-    
-    -- Настройки
-    local ITEM_NAME = "Combat" 
+    local ITEM_NAME = "Combat"
     local player = game:GetService("Players").LocalPlayer
 
-    local function equipLoop()
+    task.spawn(function()
         while true do
-            local character = player.Character
-            if character then
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                local backpack = player:FindFirstChild("Backpack")
-                
-                if not character:FindFirstChild(ITEM_NAME) then
-                    if backpack then
-                        local item = backpack:FindFirstChild(ITEM_NAME)
-                        if item and humanoid then
-                            humanoid:EquipTool(item)
-                        end
-                    end
+            local char = player.Character
+            if char then
+                local hum = char:FindFirstChildOfClass("Humanoid")
+                local bp = player:FindFirstChild("Backpack")
+                if hum and bp and not char:FindFirstChild(ITEM_NAME) then
+                    local tool = bp:FindFirstChild(ITEM_NAME)
+                    if tool then hum:EquipTool(tool) end
                 end
             end
             task.wait(2)
         end
-    end
-
-    task.spawn(equipLoop)
+    end)
 
     local VirtualUser = game:GetService("VirtualUser")
-    print("Hack Script: Auto-Clicker Started")
-
     task.spawn(function()
         while true do
             VirtualUser:CaptureController()
-            VirtualUser:ClickButton1(Vector2.new(851, 158), workspace.CurrentCamera.CFrame)
-            task.wait(0.05) 
+            VirtualUser:ClickButton1(Vector2.new(851,158), workspace.CurrentCamera.CFrame)
+            task.wait(0.05)
         end
     end)
 
-    -- Цикл телепортации
-    task.spawn(function() -- Обернуто в spawn, чтобы не стопорить выполнение если нужно
-        local player = game:GetService("Players").LocalPlayer
+    task.spawn(function()
+        while true do
+            task.wait(15)
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame =
+                    workspace.Bosses.Waiting.Titan.qw.CFrame
+            end
 
-while true do
-wait(15)
-player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Bosses.Waiting.Titan.qw.CFrame
-wait(8)
-if game:GetService("Workspace").RespawnMobs.Titan.Titan.Titan  then
-	player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").RespawnMobs.Titan.Titan.CFrame
-end
-wait (27)
-player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Bosses.Waiting.Muscle.qw.CFrame
-wait(8)
-if game:GetService("Workspace").RespawnMobs.Muscle.Muscle then
-	player.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").RespawnMobs.Muscle.Muscle.CFrame
-end
-task.wait(1)
-end
+            task.wait(8)
+            if workspace.RespawnMobs.Titan
+                and workspace.RespawnMobs.Titan:FindFirstChild("Titan")
+                and workspace.RespawnMobs.Titan.Titan:FindFirstChild("Titan")
+            then
+                player.Character.HumanoidRootPart.CFrame =
+                    workspace.RespawnMobs.Titan.Titan.CFrame
+            end
+
+            task.wait(27)
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame =
+                    workspace.Bosses.Waiting.Muscle.qw.CFrame
+            end
+
+            task.wait(8)
+            if workspace.RespawnMobs.Muscle
+                and workspace.RespawnMobs.Muscle:FindFirstChild("Muscle")
+            then
+                player.Character.HumanoidRootPart.CFrame =
+                    workspace.RespawnMobs.Muscle.Muscle.CFrame
+            end
+        end
     end)
-    
-    ---------------------------------
 end
 
-if getgenv().RedExecutorKeySys then return end
-getgenv().RedExecutorKeySys = true
+--------------------------------------------------
+-- KEY SYSTEM
+--------------------------------------------------
+if getgenv().FixedKeySys then return end
+getgenv().FixedKeySys = true
 
--- Services
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
-local HttpService = game:GetService("HttpService")
+local SAVE_FILE = "anubis_key.txt"
 
--- Configuration
-local KeySystemData = {
-    Name = "Anubis HUB",
-    Colors = {
-        Background = Color3.fromRGB(30, 30, 35),
-        Title = Color3.fromRGB(220, 50, 50),
-        InputField = Color3.fromRGB(25, 25, 30),
-        InputFieldBorder = Color3.fromRGB(180, 0, 0),
-        Button = Color3.fromRGB(25, 25, 30),
-        ButtonHover = Color3.fromRGB(35, 35, 40),
-        Error = Color3.fromRGB(220, 50, 50),
-        Success = Color3.fromRGB(80, 200, 80),
-        Discord = Color3.fromRGB(88, 101, 242)
-    },
-    Service = "redexecutor",
-    SilentMode = false,
-    DiscordInvite = "FeSD9YyA4r",
-    WebsiteURL = "https://yourwebsite.com/",
-    FileName = "redexecutor/key.txt"
+local Colors = {
+    BG = Color3.fromRGB(20,20,25),
+    Red = Color3.fromRGB(220,50,50),
+    Green = Color3.fromRGB(80,200,80),
+    Button = Color3.fromRGB(45,45,55),
+    Input = Color3.fromRGB(30,30,35),
+    Discord = Color3.fromRGB(88,101,242)
 }
 
-local function CreateObject(class, props)
-    local obj = Instance.new(class)
-    for prop, value in pairs(props) do 
-        if prop ~= "Parent" then
-            obj[prop] = value
+--------------------------------------------------
+-- FILE SYSTEM
+--------------------------------------------------
+local function saveKey(k)
+    if writefile then writefile(SAVE_FILE, k) end
+end
+
+local function loadKey()
+    if isfile and readfile and isfile(SAVE_FILE) then
+        local k = readfile(SAVE_FILE)
+        if k and #k > 5 then
+            return k
         end
     end
-    if props.Parent then
-        obj.Parent = props.Parent
-    end
-    return obj
 end
 
-local function SmoothTween(obj, time, properties)
-    local tween = TweenService:Create(obj, TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), properties)
-    tween:Play()
-    return tween
+--------------------------------------------------
+-- GUI
+--------------------------------------------------
+local Gui = Instance.new("ScreenGui", CoreGui)
+Gui.IgnoreGuiInset = false
+Gui.ResetOnSpawn = false
+
+local Frame = Instance.new("Frame", Gui)
+Frame.Size = UDim2.fromOffset(420, 360) -- РЕАЛЬНЫЙ МАЛЕНЬКИЙ РАЗМЕР
+Frame.Position = UDim2.fromScale(0.5, 0.5)
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+Frame.BackgroundColor3 = Colors.BG
+Frame.BorderSizePixel = 0
+
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0,16)
+
+local Stroke = Instance.new("UIStroke", Frame)
+Stroke.Color = Color3.fromRGB(60,60,75)
+Stroke.Thickness = 1
+Stroke.Transparency = 0.15
+
+local Constraint = Instance.new("UISizeConstraint", Frame)
+Constraint.MinSize = Vector2.new(340, 300)
+Constraint.MaxSize = Vector2.new(480, 420)
+
+local Layout = Instance.new("UIListLayout", Frame)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.VerticalAlignment = Enum.VerticalAlignment.Center
+Layout.Padding = UDim.new(0,12)
+
+local function label(text,size,color)
+    local l = Instance.new("TextLabel", Frame)
+    l.Size = UDim2.new(1,-40,0,size)
+    l.BackgroundTransparency = 1
+    l.Text = text
+    l.Font = Enum.Font.GothamBold
+    l.TextSize = size
+    l.TextColor3 = color
+    return l
 end
 
-local ScreenGui = CreateObject("ScreenGui", {
-    Name = "RedExecutorKeySystem", 
-    Parent = CoreGui, 
-    ResetOnSpawn = false,
-    ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-    DisplayOrder = 999
-})
+label("ANUBIS HUB", 24, Colors.Red)
+label("Key System", 13, Color3.fromRGB(180,180,180))
 
-local MainFrame = CreateObject("Frame", {
-    Name = "MainFrame",
-    Parent = ScreenGui,
-    BackgroundColor3 = KeySystemData.Colors.Background,
-    BorderColor3 = KeySystemData.Colors.InputFieldBorder,
-    BorderSizePixel = 2,
-    Position = UDim2.new(0.5, 0, 0.5, 0),
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    Size = UDim2.new(0, 350, 0, 250),
-    ClipsDescendants = true
-})
-CreateObject("UICorner", {CornerRadius = UDim.new(0, 8), Parent = MainFrame})
+local KeyBox = Instance.new("TextBox", Frame)
+KeyBox.Size = UDim2.new(0.85,0,0,42)
+KeyBox.PlaceholderText = "Enter your key..."
+KeyBox.Text = loadKey() or ""
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextSize = 14
+KeyBox.TextColor3 = Color3.new(1,1,1)
+KeyBox.BackgroundColor3 = Colors.Input
+Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0,10)
 
-local TitleBar = CreateObject("Frame", {
-    Name = "TitleBar",
-    Parent = MainFrame,
-    BackgroundColor3 = KeySystemData.Colors.Background,
-    Size = UDim2.new(1, 0, 0, 30),
-    BorderSizePixel = 0,
-    Position = UDim2.new(0, 0, 0, 0)
-})
-CreateObject("UICorner", {CornerRadius = UDim.new(0, 8, 0, 0), Parent = TitleBar})
+local function button(text,color)
+    local b = Instance.new("TextButton", Frame)
+    b.Size = UDim2.new(0.85,0,0,42)
+    b.Text = text
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 14
+    b.TextColor3 = Color3.new(1,1,1)
+    b.BackgroundColor3 = color
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0,10)
+    return b
+end
 
-local Title = CreateObject("TextLabel", {
-    Name = "Title",
-    Parent = TitleBar,
-    BackgroundTransparency = 1,
-    Text = KeySystemData.Name .. " Key System",
-    Position = UDim2.new(0.5, 0, 0.5, 0),
-    Size = UDim2.new(0, 200, 0, 20),
-    Font = Enum.Font.GothamBold,
-    TextColor3 = KeySystemData.Colors.Title,
-    TextSize = 14,
-    TextXAlignment = Enum.TextXAlignment.Center,
-    AnchorPoint = Vector2.new(0.5, 0.5)
-})
+local VerifyBtn = button("VERIFY KEY", Colors.Button)
+local GetKeyBtn = button("GET KEY", Colors.Button)
+local DiscordBtn = button("JOIN DISCORD", Colors.Discord)
 
-local KeyInput = CreateObject("TextBox", {
-    Name = "KeyInput",
-    Parent = MainFrame,
-    BackgroundColor3 = KeySystemData.Colors.InputField,
-    Text = "",
-    PlaceholderText = "Enter your key here...",
-    Position = UDim2.new(0.5, 0, 0.3, 0),
-    Size = UDim2.new(0, 280, 0, 35),
-    Font = Enum.Font.Gotham,
-    TextSize = 14,
-    TextColor3 = Color3.fromRGB(220, 220, 220),
-    PlaceholderColor3 = Color3.fromRGB(140, 140, 140),
-    TextXAlignment = Enum.TextXAlignment.Left,
-    AnchorPoint = Vector2.new(0.5, 0),
-    ClipsDescendants = true,
-    ClearTextOnFocus = false
-})
-CreateObject("UICorner", {CornerRadius = UDim.new(0, 6), Parent = KeyInput})
-CreateObject("UIStroke", {
-    Parent = KeyInput,
-    Color = KeySystemData.Colors.InputFieldBorder,
-    Thickness = 1,
-    Transparency = 0.8
-})
-CreateObject("UIPadding", {
-    Parent = KeyInput,
-    PaddingLeft = UDim.new(0, 10)
-})
+local Status = label("", 13, Colors.Red)
+local busy = false
 
-local SubmitButton = CreateObject("TextButton", {
-    Name = "ValidateButton",
-    Parent = MainFrame,
-    BackgroundColor3 = KeySystemData.Colors.Button,
-    BorderColor3 = KeySystemData.Colors.InputFieldBorder,
-    BorderSizePixel = 1,
-    Position = UDim2.new(0.3, 0, 0.55, 0),
-    Size = UDim2.new(0, 110, 0, 32),
-    Text = "Verify Key",
-    Font = Enum.Font.GothamBold,
-    TextSize = 14,
-    TextColor3 = KeySystemData.Colors.Title,
-    AutoButtonColor = false,
-    AnchorPoint = Vector2.new(0.5, 0)
-})
-CreateObject("UICorner", {CornerRadius = UDim.new(0, 6), Parent = SubmitButton})
+local function setStatus(t,c)
+    Status.Text = t
+    Status.TextColor3 = c
+end
 
-local GetKeyButton = CreateObject("TextButton", {
-    Name = "GetKeyButton",
-    Parent = MainFrame,
-    BackgroundColor3 = KeySystemData.Colors.Button,
-    BorderColor3 = KeySystemData.Colors.InputFieldBorder,
-    BorderSizePixel = 1,
-    Position = UDim2.new(0.7, 0, 0.55, 0),
-    Size = UDim2.new(0, 110, 0, 32),
-    Text = "Get Key",
-    Font = Enum.Font.Gotham,
-    TextSize = 14,
-    TextColor3 = KeySystemData.Colors.Title,
-    AutoButtonColor = false,
-    AnchorPoint = Vector2.new(0.5, 0)
-})
-CreateObject("UICorner", {CornerRadius = UDim.new(0, 6), Parent = GetKeyButton})
+--------------------------------------------------
+-- JUNKIE
+--------------------------------------------------
+local function getJunkie()
+    return loadstring(game:HttpGet(
+        "https://junkie-development.de/sdk/JunkieKeySystem.lua"))()
+end
 
-local DiscordButton = CreateObject("TextButton", {
-    Name = "DiscordButton",
-    Parent = MainFrame,
-    BackgroundColor3 = KeySystemData.Colors.Discord,
-    Position = UDim2.new(0.5, 0, 0.75, 0),
-    Size = UDim2.new(0, 220, 0, 32),
-    Text = "Join Discord",
-    Font = Enum.Font.GothamBold,
-    TextSize = 14,
-    TextColor3 = Color3.fromRGB(255, 255, 255),
-    AutoButtonColor = false,
-    AnchorPoint = Vector2.new(0.5, 0)
-})
-CreateObject("UICorner", {CornerRadius = UDim.new(0, 6), Parent = DiscordButton})
+--------------------------------------------------
+-- BUTTON LOGIC
+--------------------------------------------------
+GetKeyBtn.Activated:Connect(function()
+    if busy then return end
+    busy = true
+    setStatus("Generating key link...", Color3.fromRGB(255,170,0))
 
-local StatusLabel = CreateObject("TextLabel", {
-    Name = "StatusLabel",
-    Parent = MainFrame,
-    BackgroundTransparency = 1,
-    Position = UDim2.new(0.5, 0, 0.9, 0),
-    Size = UDim2.new(0, 280, 0, 20),
-    Font = Enum.Font.Gotham,
-    Text = "",
-    TextColor3 = KeySystemData.Colors.Error,
-    TextSize = 12,
-    TextXAlignment = Enum.TextXAlignment.Center,
-    AnchorPoint = Vector2.new(0.5, 0),
-    TextTransparency = 1
-})
-
-local function ShowStatusMessage(text, color)
-    StatusLabel.Text = text
-    StatusLabel.TextColor3 = color
-    StatusLabel.TextTransparency = 0
-    SmoothTween(StatusLabel, 0.3, {TextTransparency = 0})
-    
     task.spawn(function()
-        task.wait(3)
-        if StatusLabel.Text == text then
-            SmoothTween(StatusLabel, 0.5, {TextTransparency = 1})
-        end
-    end)
-end
+        local ok,res = pcall(function()
+            return getJunkie().getLink(Config.api, Config.provider, Config.service)
+        end)
 
-local function AddHoverEffect(button)
-    button.MouseEnter:Connect(function()
-        SmoothTween(button, 0.2, {
-            BackgroundColor3 = KeySystemData.Colors.ButtonHover
-        })
-    end)
-    
-    button.MouseLeave:Connect(function()
-        SmoothTween(button, 0.2, {
-            BackgroundColor3 = KeySystemData.Colors.Button
-        })
-    end)
-end
-
-AddHoverEffect(SubmitButton)
-AddHoverEffect(GetKeyButton)
-
-KeyInput.Focused:Connect(function()
-    SmoothTween(KeyInput.UIStroke, 0.2, {
-        Color = KeySystemData.Colors.Title, 
-        Transparency = 0.3
-    })
-end)
-
-KeyInput.FocusLost:Connect(function()
-    SmoothTween(KeyInput.UIStroke, 0.2, {
-        Color = KeySystemData.Colors.InputFieldBorder, 
-        Transparency = 0.8
-    })
-end)
-
-local function openGetKey()
-    local JunkieKeySystem = loadstring(game:HttpGet("https://junkie-development.de/sdk/JunkieKeySystem.lua"))()
-    local API_KEY = Config.api
-    local PROVIDER = Config.provider
-    local SERVICE = Config.service
-    local link = JunkieKeySystem.getLink(API_KEY, PROVIDER, SERVICE)
-    if link then
-        if setclipboard then
-            setclipboard(link)
-            ShowStatusMessage("Verification link copied!", KeySystemData.Colors.Success)
+        if ok and res then
+            if setclipboard then setclipboard(res) end
+            setStatus("Key link copied ✔", Colors.Green)
         else
-            ShowStatusMessage("Link: " .. link, KeySystemData.Colors.Success)
+            setStatus("Failed to get key link", Colors.Red)
         end
-    else
-        ShowStatusMessage("Failed to generate link", KeySystemData.Colors.Error)
-    end
-end
+        busy = false
+    end)
+end)
 
-local function validateKey()
-    local userKey = KeyInput.Text:gsub("%s+", "")
-    if not userKey or userKey == "" then
-        ShowStatusMessage("Please enter a key.", KeySystemData.Colors.Error)
+VerifyBtn.Activated:Connect(function()
+    if busy then return end
+    busy = true
+
+    local key = KeyBox.Text:gsub("%s+","")
+    if key == "" then
+        setStatus("Enter a key!", Colors.Red)
+        busy = false
         return
     end
 
-    ShowStatusMessage("Validating key...", Color3.fromRGB(255, 165, 0))
-    local JunkieKeySystem = loadstring(game:HttpGet("https://junkie-development.de/sdk/JunkieKeySystem.lua"))()
-    local API_KEY = Config.api
-    local SERVICE = Config.service
-    local isValid = JunkieKeySystem.verifyKey(API_KEY, userKey, SERVICE)
-    
-    if isValid then
-        ShowStatusMessage("Key valid! Loading...", KeySystemData.Colors.Success)
-        SmoothTween(MainFrame, 0.5, {
-            Position = UDim2.new(0.5, 0, -0.5, 0),
-            BackgroundTransparency = 1
-        })
-        task.wait(0.5)
-        ScreenGui:Destroy()
-        main() -- ЗАПУСК ТВОЕГО СКРИПТА
-    else
-        ShowStatusMessage("Invalid key. Try again!", KeySystemData.Colors.Error)
-    end
-end
+    setStatus("Verifying key...", Color3.fromRGB(255,170,0))
 
-SubmitButton.MouseButton1Click:Connect(validateKey)
-GetKeyButton.MouseButton1Click:Connect(openGetKey)
-
--- Dragging logic
-local dragging, dragInput, dragStart, startPos
-local function onInputChanged(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end
-
-TitleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+    task.spawn(function()
+        local ok,valid = pcall(function()
+            return getJunkie().verifyKey(Config.api, key, Config.service)
         end)
-    end
+
+        if ok and valid then
+            saveKey(key)
+            setStatus("Key valid ✔", Colors.Green)
+            task.wait(0.5)
+            Gui:Destroy()
+            main()
+        else
+            setStatus("Invalid or expired key", Colors.Red)
+            busy = false
+        end
+    end)
 end)
 
-TitleBar.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
-end)
-
-UserInputService.InputChanged:Connect(onInputChanged)
-
-DiscordButton.MouseButton1Click:Connect(function()
-    local discordUrl = "https://discord.gg/" .. KeySystemData.DiscordInvite
+DiscordBtn.Activated:Connect(function()
     if setclipboard then
-        setclipboard(discordUrl)
-        ShowStatusMessage("Copied Discord invite!", Color3.fromRGB(123, 48, 220))
+        setclipboard("https://discord.gg/FeSD9YyA4r")
+    end
+    setStatus("Discord copied ✔", Colors.Green)
+end)
+
+--------------------------------------------------
+-- AUTO CHECK SAVED KEY
+--------------------------------------------------
+task.spawn(function()
+    local saved = loadKey()
+    if not saved then return end
+    busy = true
+    setStatus("Checking saved key...", Color3.fromRGB(255,170,0))
+
+    local ok,valid = pcall(function()
+        return getJunkie().verifyKey(Config.api, saved, Config.service)
+    end)
+
+    if ok and valid then
+        setStatus("Saved key valid ✔", Colors.Green)
+        task.wait(0.5)
+        Gui:Destroy()
+        main()
     else
-        ShowStatusMessage("Join: " .. discordUrl, Color3.fromRGB(123, 48, 220))
+        setStatus("Saved key expired", Colors.Red)
+        busy = false
     end
 end)
-
-KeyInput.FocusLost:Connect(function(enterPressed)
-    if enterPressed then validateKey() end
-end)
-
--- Анимация появления
-MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0)
-MainFrame.Size = UDim2.new(0, 0, 0, 0)
-MainFrame.BackgroundTransparency = 1
-
-SmoothTween(MainFrame, 0.5, {
-    Size = UDim2.new(0, 350, 0, 250), 
-    Position = UDim2.new(0.5, 0, 0.5, 0),
-    BackgroundTransparency = 0
-})
