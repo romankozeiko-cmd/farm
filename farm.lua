@@ -3,7 +3,7 @@
 Config = {
     api = "7a4939b2-37ac-4a92-98d2-b2bacdf36791",
     service = "Saltink",
-    provider = "Anubis"
+    provider = "Anubis1"
 }
 
 --------------------------------------------------
